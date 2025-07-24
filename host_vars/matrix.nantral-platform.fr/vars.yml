@@ -1,0 +1,197 @@
+---
+# The bare domain name which represents your Matrix identity.
+# Matrix user IDs for your server will be of the form (`@alice:example.com`).
+#
+# Note: this playbook does not touch the server referenced here.
+# Installation happens on another server ("matrix.example.com", see `matrix_server_fqn_matrix`).
+#
+# If you've deployed using the wrong domain, you'll have to run the Uninstalling step,
+# because you can't change the Domain after deployment.
+matrix_domain: nantral-platform.fr
+
+# The Matrix homeserver software to install.
+# See:
+#  - `roles/custom/matrix-base/defaults/main.yml` for valid options
+#  - the `docs/configuring-playbook-IMPLEMENTATION_NAME.md` documentation page, if one is available for your implementation choice
+#
+# By default, we use Synapse, because it's the only full-featured Matrix server at the moment.
+#
+# Note that the homeserver implementation of a server will not be able to be changed without data loss.
+matrix_homeserver_implementation: synapse
+
+# A secret used as a base, for generating various other secrets.
+# You can put any string here, but generating a strong one is preferred. You can create one with a command like `pwgen -s 64 1`.
+#matrix_homeserver_generic_secret_key: <DEFINED IN SECRET FILE>
+
+# By default, the playbook manages its own Traefik (https://doc.traefik.io/traefik/) reverse-proxy server.
+# It will retrieve SSL certificates for you on-demand and forward requests to all other components.
+# For alternatives, see `docs/configuring-playbook-own-webserver.md`.
+matrix_playbook_reverse_proxy_type: playbook-managed-traefik
+
+# Controls whether container networks will be created with IPv6 support.
+#
+# If you also have IPv6 support on your server/network and AAAA DNS records pointing to the server,
+# enabling this will effectively give you full public IPv6 connectivity (powered by NAT66).
+#
+# We recommend leaving this enabled even if you don't currently have IPv6 connectivity on your server/network.
+# This way, once you eventually get IPv6 connectivity, you won't have to change anything (besides DNS records).
+#
+# Flipping this setting later on requires manual work (stopping services, deleting and recreating all container networks).
+#
+# In the future, this setting will likely default to `true`, so if you really want IPv6 disabled, explicitly set this to `false`.
+#
+# People managing Docker themselves and running an older Docker version will need additional configuration.
+#
+# Learn more in `docs/configuring-ipv6.md`.
+devture_systemd_docker_base_ipv6_enabled: true
+
+# A Postgres password to use for the superuser Postgres user (called `matrix` by default).
+#
+# The playbook creates additional Postgres users and databases (one for each enabled service) using this superuser account.
+#
+# Changing this value subsequently requires manual work.
+# The value used here must be shorter than 100 characters.
+#postgres_connection_password: <DEFINED IN SECRET FILE>
+
+# By default, we configure coturn's external IP address using the value specified for `ansible_host` in your `inventory/hosts` file.
+# If this value is an external IP address, you can skip this section.
+#
+# If `ansible_host` is not the server's external IP address, you have 2 choices:
+# 1. Uncomment the line below, to allow IP address auto-detection to happen (more on this below)
+# 2. Uncomment and adjust the line below to specify an IP address manually
+#
+# By default, auto-detection will be attempted using the `https://ifconfig.co/json` API.
+# Default values for this are specified in `matrix_coturn_turn_external_ip_address_auto_detection_*` variables in the coturn role
+# (see `roles/custom/matrix-coturn/defaults/main.yml`).
+#
+# If your server has multiple IP addresses, you may define them in another variable which allows a list of addresses.
+# Example: `matrix_coturn_turn_external_ip_addresses: ['1.2.3.4', '4.5.6.7']`
+#
+# matrix_coturn_turn_external_ip_address: ''
+
+## Synapse Workers
+matrix_synapse_workers_enabled: true
+matrix_synapse_workers_preset: specialized-workers
+
+## Retention
+matrix_synapse_retention_enabled: true
+matrix_synapse_retention_purge_jobs:
+  # Clear old messages every day
+  - interval: "1d"
+# One year for messages
+matrix_synapse_retention_period: "1y"
+# One mounth for media (photo, video,...)
+matrix_synapse_media_retention_local_media_lifetime: "1m"
+matrix_synapse_media_retention_remote_media_lifetime: "1m"
+
+## Auth
+matrix_synapse_enable_registration: false
+matrix_synapse_password_config_localdb_enabled: false
+# REST password provider
+matrix_synapse_ext_password_provider_rest_auth_enabled: true
+matrix_synapse_ext_password_provider_rest_auth_download_url: "https://raw.githubusercontent.com/3cn-ecn/matrix-config/refs/heads/main/modules/rest_auth_provider.py"
+matrix_synapse_ext_password_provider_rest_auth_endpoint: "https://nantral-platform.fr"
+matrix_synapse_ext_password_provider_rest_auth_registration_enforce_lowercase: true
+matrix_synapse_ext_password_provider_rest_auth_registration_profile_name_autofill: true
+matrix_synapse_ext_password_provider_rest_auth_login_profile_name_autofill: false
+
+## Federation -- disabled for privacy
+matrix_synapse_federation_enabled: false
+matrix_synapse_federation_port_openid_resource_required: false
+matrix_synapse_allow_public_rooms_over_federation: false
+matrix_synapse_federation_port_enabled: false
+matrix_synapse_reverse_proxy_companion_federation_api_enabled: false
+
+## SSL
+traefik_config_certificatesResolvers_acme_dnsChallenge_enabled: true
+traefik_config_certificatesResolvers_acme_dnsChallenge_provider: "ovh"
+traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck: 60
+#traefik_environment_variables: <DEFINED IN SECRET FILE>
+
+## Rooms
+matrix_synapse_auto_join_rooms:
+  - "#home:nantral-platform.fr"
+matrix_synapse_auto_join_mxid_localpart: "admin"
+matrix_synapse_auto_accept_invites_enabled: true
+matrix_synapse_auto_accept_invites_only_for_direct_messages: true
+matrix_synapse_auto_accept_invites_only_from_local_users: false
+
+## Emails
+exim_relay_enabled: false
+matrix_synapse_email_enabled: true
+matrix_synapse_email_smtp_host: "mail.nantral-platform.fr"
+matrix_synapse_email_smtp_port: 465
+#matrix_synapse_email_smtp_user: <DEFINED IN SECRET FILE>
+#matrix_synapse_email_smtp_pass: <DEFINED IN SECRET FILE>
+matrix_synapse_email_smtp_require_transport_security: false
+matrix_synapse_email_notif_from: "Matrix <matrix@nantral-platform.fr>"
+matrix_synapse_email_app_name: Matrix
+matrix_synapse_email_invite_client_location: "https://element.nantral-platform.fr"
+
+## Storage
+matrix_media_repo_enabled: true
+matrix_media_repo_admins: ["@admin:nantral-platform.fr"]
+matrix_media_repo_datastore_file_for_kinds: []
+matrix_media_repo_datastore_s3_for_kinds:
+  ["thumbnails", "remote_media", "local_media", "archives"]
+matrix_media_repo_datastore_s3_opts_temp_path: "/tmp"
+matrix_media_repo_datastore_s3_opts_endpoint: "s3.sbg.io.cloud.ovh.net"
+#matrix_media_repo_datastore_s3_opts_access_key_id: <DEFINED IN SECRET FILE>
+#matrix_media_repo_datastore_s3_opts_access_secret: <DEFINED IN SECRET FILE>
+matrix_media_repo_datastore_s3_opts_ssl: true
+matrix_media_repo_datastore_s3_opts_bucket_name: "nantral-platform-matrix"
+matrix_media_repo_datastore_s3_opts_region: "sbg"
+matrix_media_repo_datastore_s3_opts_storage_class: "STANDARD"
+#matrix_media_repo_datastore_s3_opts_public_base_url: "https://nantral-platform-matrix.s3.sbg.io.cloud.ovh.net/"
+matrix_media_repo_quotas_users_additional:
+  - glob: "@*:*" # Affect all users. Use asterisks (*) to match any character.
+    # The maximum number of TOTAL bytes a user can upload. Defaults to zero (no limit).
+    maxBytes: 536870912 # 512MiB
+    # The same as maxPending above - the number of uploads the user can have waiting to
+    # complete before starting another one. Defaults to maxPending above. Set to 0 to
+    # disable.
+    maxPending: 5
+    # The maximum number of uploaded files a user can have. Defaults to zero (no limit).
+    # If both maxBytes and maxFiles are in use then the first condition a user triggers
+    # will prevent upload. Note that a user can still have uploads contributing to maxPending,
+    # but will not be able to complete them if they are at maxFiles.
+    maxFiles: 0
+matrix_media_repo_thumbnails_expire_after_days: 15
+
+## Templates TODO: Create and store the templates
+
+## Admin
+matrix_synapse_admin_enabled: true
+matrix_synapse_admin_path_prefix: /admin
+
+## Others
+matrix_url_preview_accept_language: ["fr-FR", "fr", "en-US", "en"]
+
+## Privacy
+matrix_synapse_presence_enabled: true
+matrix_synapse_allow_public_rooms_without_auth: false
+matrix_synapse_require_auth_for_profile_requests: true # Useless if federation enabled
+matrix_synapse_limit_profile_requests_to_users_who_share_rooms: false # Does not work with federation
+matrix_synapse_include_profile_data_on_invite: true
+# User search behaviour
+matrix_synapse_user_directory_search_all_users: false
+matrix_synapse_user_directory_prefer_local_users: false
+
+## Element
+matrix_client_element_enabled: true
+matrix_client_element_default_country_code: "FR"
+matrix_client_element_themes_enabled: true
+matrix_client_element_brand: "Element - Nantral Platform"
+matrix_client_element_welcome_logo: "https://nantral-platform.fr/static/img/logo/scalable/logo.svg"
+matrix_client_element_welcome_logo_link: "https://nantral-platform.fr"
+
+## Stats
+matrix_synapse_usage_exporter_enabled: true
+prometheus_enabled: true
+prometheus_node_exporter_enabled: true
+prometheus_postgres_exporter_enabled: true
+matrix_prometheus_nginxlog_exporter_enabled: true
+grafana_enabled: true
+grafana_default_admin_user: "admin"
+#grafana_default_admin_password: <DEFINED IN SECRET FILE>
+
