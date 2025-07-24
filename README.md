@@ -4,7 +4,8 @@ This is the configuration file for the matrix homeserver of the students
 of Centrale Nantes. It uses the [Matrix Docker Ansible Deploy (MDAD)](https://github.com/spantaleev/matrix-docker-ansible-deploy)
 playbook.
 
-See the [config file](host_vars/vars.yml) for the details on the configuration.
+See the [config file](host_vars/matrix.nantral-platform.fr/vars.yml) for the
+details on the configuration.
 
 Please refer to the [Matrix Docker Ansible Deploy documentation](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/README.md)
 if you want more information on how to use this configuration.
@@ -32,10 +33,12 @@ git clone git@github.com:3cn-ecn/matrix-config.git inventory
 
 Create the file `inventory/host_vars/vars_secrets.yml` and configure
 the different secrets that are referenced
-in [`inventory/host_vars/vars.yml`](host_vars/vars.yml) with the value
-`<DEFINED IN SECRET FILE>`.
+in [`inventory/host_vars/matrix.nantral-platform.fr/vars.yml`](host_vars/matrix.nantral-platform.fr/vars.yml)
+with the value `<DEFINED IN SECRET FILE>`.
 
-If you want to deploy to another server, update the [`inventory/hosts`](hosts) file.
+If you want to deploy to another server, move the `vars.yml` file to the
+appropriate directory, change the server name in it and update the
+[`inventory/hosts`](hosts) file.
 
 Finally, you can run the playbook with:
 
