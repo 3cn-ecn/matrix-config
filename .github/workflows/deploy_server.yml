@@ -1,0 +1,42 @@
+name: Deploy Matrix
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - host_vars/**
+      - modules/**
+      - hosts
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Matrix Docker Ansible Deploy
+        uses: actions/checkout@v4
+        with:
+          repository: spantaleev/matrix-docker-ansible-deploy
+
+      - name: Checkout config
+        uses: actions/checkout@v4
+        with:
+          path: inventory
+
+      - name: Set up SSH
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+
+      - name: Install Ansible
+        shell: bash
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+
+      - name: Run Ansible Playbook
+        run: |
+          echo "${{ secrets.VAULT_PASS_PROD }}" > vault_password.txt
+          ansible-playbook -i inventory/hosts setup.yml --tags=setup-all,ensure-matrix-users-created,start --vault-password-file=vault_password.txt --private-key private_key.pem
