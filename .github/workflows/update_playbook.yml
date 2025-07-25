@@ -1,13 +1,6 @@
-name: Deploy Matrix
+name: Update Matrix Docker Ansible Deploy
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - host_vars/**
-      - modules/**
-      - hosts
   workflow_dispatch:
 
 jobs:
@@ -15,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to the VPS
+      - name: Update Matrix Docker Ansible Deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.INSTANCE_ADDRESS }}
@@ -24,10 +17,11 @@ jobs:
           script: |
             cd matrix-docker-ansible-deploy
             # Update the repo
-            cd inventory
             git stash
             git pull
             git stash pop
-            cd ..
+            # Reinstall galaxy roles
+            rm -rf roles/galaxy
+            ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
             # Configure the vault password and run the playbook
             echo "${{ secrets.VAULT_PASS_PROD }}" | ansible-playbook -i inventory/hosts_local setup.yml --tags=setup-all,ensure-matrix-users-created,start --vault-password-file=/bin/cat
