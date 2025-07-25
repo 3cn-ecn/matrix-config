@@ -25,18 +25,21 @@ jobs:
         with:
           path: inventory
 
-      - name: Set up SSH
-        run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
-          chmod 600 private_key.pem
-
       - name: Install Ansible
         shell: bash
         run: |
           sudo apt update
           sudo apt install -y ansible
 
+      - name: Install Ansible Galaxy dependencies
+        shell: bash
+        run: |
+          rm -rf roles/galaxy
+          ansible-galaxy install -r requirements.yml -p roles/galaxy/ --force
+
       - name: Run Ansible Playbook
         run: |
           echo "${{ secrets.VAULT_PASS_PROD }}" > vault_password.txt
-          ansible-playbook -i inventory/hosts setup.yml --tags=setup-all,ensure-matrix-users-created,start --vault-password-file=vault_password.txt --private-key private_key.pem
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          ansible-playbook -i inventory/hosts setup.yml --tags=setup-all,ensure-matrix-users-created,start --vault-password-file=vault_password.txt --private-key=private_key.pem
