@@ -31,32 +31,31 @@ Now you will need to get the configuration from this repository:
 git clone git@github.com:3cn-ecn/matrix-config.git inventory
 ```
 
-Create the file `inventory/host_vars/vars_secrets.yml` and configure
-the different secrets that are referenced
-in [`inventory/host_vars/matrix.nantral-platform.fr/vars.yml`](host_vars/matrix.nantral-platform.fr/vars.yml)
-with the value `<DEFINED IN SECRET FILE>`.
+*We use ssh but you can also use https*
 
 If you want to deploy to another server, move the `vars.yml` file to the
 appropriate directory, change the server name in it and update the
 [`inventory/hosts`](hosts) file.
 
+You also need to reconfigure all the vault encrypted variables.
+
 Finally, you can run the playbook with:
 
 ```bash
-just install-all
+just install-all --ask-vault-pass
 ```
 
 If you removed components, you will need to run to actually remove them:
 
 ```bash
-just setup-all
+just setup-all --ask-vault-pass
 ```
 
 To create a new user, you can run (`yes` at the end is for granting admin rights,
 use `no` if you don't want to):
 
 ```bash
-just register-user YOUR_USERNAME YOUR_PASSWORD yes
+just register-user YOUR_USERNAME YOUR_PASSWORD yes --ask-vault-pass
 ```
 
 *Please note that this alone is pointless with this setup because we disabled
