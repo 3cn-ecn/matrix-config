@@ -18,4 +18,4 @@
 # to the host line below.
 
 [matrix_servers]
-matrix.nantral-platform.fr ansible_host=51.254.98.143 ansible_ssh_user=ubuntu
+matrix.nantral-platform.fr ansible_host=51.254.98.143 ansible_ssh_user=ubuntu ansible_become=true ansible_become_user=root ansible_ssh_pipelining=False
