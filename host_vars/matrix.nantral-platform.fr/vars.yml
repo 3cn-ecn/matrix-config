@@ -255,7 +255,8 @@ prometheus_enabled: true
 prometheus_node_exporter_enabled: true
 prometheus_postgres_exporter_enabled: true
 matrix_synapse_metrics_enabled: true
-matrix_synapse_usage_exporter_enabled: true
+matrix_synapse_usage_exporter_enabled: false
+#matrix_synapse_usage_exporter_container_image_self_build_repo: "https://github.com/famedly/synapse-usage-exporter.git"
 matrix_media_repo_metrics_enabled: true
 grafana_enabled: true
 grafana_default_admin_user: "admin"
