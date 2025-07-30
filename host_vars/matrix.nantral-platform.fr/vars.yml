@@ -89,6 +89,9 @@ postgres_connection_password: !vault |
 ## Synapse Workers
 matrix_synapse_workers_enabled: true
 matrix_synapse_workers_preset: specialized-workers
+matrix_synapse_workers_federation_reader_workers_count: 0
+matrix_synapse_workers_federation_sender_workers_count: 0
+matrix_synapse_workers_media_repository_workers_count: 0
 
 ## Retention
 matrix_synapse_retention_enabled: true
