@@ -239,6 +239,12 @@ matrix_synapse_admin_path_prefix: /admin
 
 ## Others
 matrix_url_preview_accept_language: ["fr-FR", "fr", "en-US", "en"]
+matrix_synapse_configuration_extension_yaml:
+  server_notices:
+    system_mxid_localpart: admin
+    system_mxid_display_name: "Administrateur"
+    system_mxid_avatar_url: "mxc://nantral-platform.fr/5153b4b5d017b43c3dfd415d2406df7ec4709a461962235702829645824"
+    room_name: "Server Notices"
 
 ## Privacy
 matrix_synapse_presence_enabled: true
