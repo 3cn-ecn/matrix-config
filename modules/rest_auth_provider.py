@@ -25,10 +25,10 @@ class RestAuthProvider:
 
 		self.api.register_password_auth_provider_callbacks(
 			check_3pid_auth=self.check_email,
-			auth_checkers={("m.login.password", ("password",)): self.check_password},
+			auth_checkers={("m.login.password", ("password",)): self.check_username},
 		)
 
-	async def check_password(
+	async def check_username(
 		self, username: str, login_type: str, login_object: JsonDict
 	):
 		if not login_type == "m.login.password":
