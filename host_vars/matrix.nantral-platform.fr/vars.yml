@@ -215,6 +215,8 @@ matrix_media_repo_datastore_s3_opts_ssl: true
 matrix_media_repo_datastore_s3_opts_bucket_name: "nantral-platform-matrix"
 matrix_media_repo_datastore_s3_opts_region: "sbg"
 matrix_media_repo_datastore_s3_opts_storage_class: "STANDARD"
+# This is for directly downloading media from the bucket, but we disable it
+# because we pay traffic (it's not the case when we forward the media)
 #matrix_media_repo_datastore_s3_opts_public_base_url: "https://nantral-platform-matrix.s3.sbg.io.cloud.ovh.net/"
 matrix_media_repo_quotas_users_additional:
   - glob: "@*:*" # Affect all users. Use asterisks (*) to match any character.
