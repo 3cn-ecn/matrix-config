@@ -246,6 +246,7 @@ matrix_synapse_configuration_extension_yaml:
     room_name: "Annonces Serveur"
     room_avatar_url: "mxc://nantral-platform.fr/5153b4b5d017b43c3dfd415d2406df7ec4709a461962235702829645824"
     auto_join: true
+  mau_stats_only: true
 
 ## Privacy
 matrix_synapse_presence_enabled: true
