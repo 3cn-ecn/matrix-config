@@ -229,6 +229,10 @@ matrix_media_repo_quotas_users_additional:
     # but will not be able to complete them if they are at maxFiles.
     maxFiles: 0
 matrix_media_repo_thumbnails_expire_after_days: 15
+# The number of requests per second before an IP will be rate limited. Must be a whole number.
+matrix_media_repo_rate_limit_requests_per_second: 10
+# The number of requests an IP can send at once before the rate limit is actually considered.
+matrix_media_repo_rate_limit_burst: 30
 
 ## Templates TODO: Create and store the templates
 
