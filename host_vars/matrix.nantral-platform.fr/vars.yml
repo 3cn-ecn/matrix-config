@@ -119,6 +119,25 @@ matrix_synapse_ext_password_provider_rest_auth_endpoint: "https://nantral-platfo
 matrix_synapse_ext_password_provider_rest_auth_registration_enforce_lowercase: true
 matrix_synapse_ext_password_provider_rest_auth_registration_profile_name_autofill: true
 matrix_synapse_ext_password_provider_rest_auth_login_profile_name_autofill: false
+# OIDConnect
+matrix_synapse_oidc_enabled: true
+matrix_synapse_oidc_providers:
+  - idp_id: nantralPlatform
+    idp_name: "Nantral Platform"
+    idp_icon: "mxc://nantral-platform.fr/9e9b4e70b9f3c22d6c57c5c433664d19533412b81969390612142620672"
+    issuer: "https://nantral-platform.fr/openid/"
+    client_id: "matrix"
+    client_secret: "{{ vault_synapse_np_oidc }}"
+    scopes: ["openid", "mas", "email"]
+    enable_registration: true
+    user_mapping_provider:
+      config:
+        localpart_template: "{% raw %}{{ user.preferred_username }}{% endraw %}"
+        confirm_localpart: false
+        display_name_template: "{% raw %}{{ user.name }}{% endraw %}"
+        email_template: "{% raw %}{{ user.email }}{% endraw %}"
+    allow_existing_users: true # To add oidc to existing accounts instead of creating new ones
+    backchannel_logout_enabled: true
 
 ## Federation -- disabled for privacy
 matrix_synapse_federation_enabled: false
@@ -246,9 +265,9 @@ matrix_synapse_configuration_extension_yaml:
   server_notices:
     system_mxid_localpart: _server
     system_mxid_display_name: "Annonces Serveur"
-    system_mxid_avatar_url: "mxc://nantral-platform.fr/5153b4b5d017b43c3dfd415d2406df7ec4709a461962235702829645824"
+    system_mxid_avatar_url: "mxc://nantral-platform.fr/9e9b4e70b9f3c22d6c57c5c433664d19533412b81969390612142620672"
     room_name: "Annonces Serveur"
-    room_avatar_url: "mxc://nantral-platform.fr/5153b4b5d017b43c3dfd415d2406df7ec4709a461962235702829645824"
+    room_avatar_url: "mxc://nantral-platform.fr/9e9b4e70b9f3c22d6c57c5c433664d19533412b81969390612142620672"
     auto_join: true
   mau_stats_only: true
 
