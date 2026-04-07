@@ -241,6 +241,26 @@ matrix_media_repo_rate_limit_burst: 30
 ## Admin
 matrix_ketesa_enabled: true
 matrix_ketesa_path_prefix: /admin
+matrix_ketesa_config_externalAuthProvider: true
+matrix_ketesa_config_menu: [
+  {
+    "label": "Support",
+    "icon": "SupportAgent",
+    "url": "https://nantral-platform.fr/feedback",
+  },
+  {
+    "label": "Stats",
+    "icon": "PieChart",
+    "url": "https://stats.nantral-platform.fr/dashboards",
+    "i18n": { "fr": "Statistiques" }
+  },
+  {
+    "label": "Update playbook",
+    "icon": "RestartAlt",
+    "url": "https://github.com/3cn-ecn/matrix-config/actions/workflows/update_playbook.yml",
+    "i18n": { "fr": "Mettre à jour le playbook" }
+  }
+]
 matrix_element_admin_enabled: true
 matrix_element_admin_hostname: "admin.{{ matrix_domain }}"
 
