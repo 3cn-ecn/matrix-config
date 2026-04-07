@@ -109,8 +109,8 @@ matrix_authentication_service_config_passwords_enabled: true
 matrix_authentication_service_admin_api_enabled: true
 
 ## Federation -- disabled for privacy
-matrix_synapse_federation_enabled: false
-matrix_synapse_federation_port_openid_resource_required: true
+matrix_synapse_federation_enabled: true
+matrix_synapse_federation_domain_whitelist: [] # Don't allow any server
 matrix_synapse_allow_public_rooms_over_federation: false
 
 ## SSL
