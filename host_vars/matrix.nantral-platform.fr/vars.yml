@@ -46,15 +46,15 @@ matrix_synapse_workers_enabled: false
 #matrix_synapse_workers_stream_writer_presence_stream_workers_count: 0
 
 ## Retention
-matrix_synapse_retention_enabled: true
-matrix_synapse_retention_purge_jobs:
-  # Clear old messages every day
-  - interval: "1d"
-# One year for messages
-matrix_synapse_retention_period: "1y"
-# One month for media (photo, video,...)
-matrix_synapse_media_retention_local_media_lifetime: "1m"
-matrix_synapse_media_retention_remote_media_lifetime: "1m"
+matrix_synapse_retention_enabled: false
+#matrix_synapse_retention_purge_jobs:
+#  # Clear old messages every day
+#  - interval: "1d"
+## One year for messages
+#matrix_synapse_retention_period: "1y"
+## One month for media (photo, video,...)
+#matrix_synapse_media_retention_local_media_lifetime: "1m"
+#matrix_synapse_media_retention_remote_media_lifetime: "1m"
 
 ## Auth
 matrix_synapse_enable_registration: false
