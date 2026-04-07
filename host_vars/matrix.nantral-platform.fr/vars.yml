@@ -241,6 +241,8 @@ matrix_media_repo_rate_limit_burst: 30
 ## Admin
 matrix_ketesa_enabled: true
 matrix_ketesa_path_prefix: /admin
+matrix_element_admin_enabled: true
+matrix_element_admin_hostname: "admin.{{ matrix_domain }}"
 
 ## Others
 matrix_url_preview_accept_language: ["fr-FR", "fr", "en-US", "en"]
