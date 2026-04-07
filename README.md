@@ -58,24 +58,21 @@ use `no` if you don't want to):
 just register-user YOUR_USERNAME YOUR_PASSWORD yes --ask-vault-pass
 ```
 
-*Please note that this alone is pointless with this setup because we disabled
-password storage, and thus you won't be able to log in with that user.*
-
-It can still be used to grant admin rights to a user if they have not already
-logged in. You need to create a user using this command with the same username
-as the one set in [Nantral Platform](https://nantral-platform.fr/) and then login
-with that user.
-
 ## Design choices
 
 ### Authentication
 
-We use [Nantral Platform](https://nantral-platform.fr/) to provide
-the password and user database. This server is developed by ourselves
-and does the verification of the users for us. The main drawback is
-that no user exist without an account on [Nantral Platform](https://nantral-platform.fr/),
-which is sort of the goal, but it also prevents the use of bots,
-because they cannot be authenticated.
+We use [Matrix Authetication Service](https://element-hq.github.io/matrix-authentication-service/)
+as authentication method in order to comply with the latest matrix clients.
+[Nantral Platform](https://nantral-platform.fr/) is configured as an upstream
+account provider. This website is developed by ourselves and does the
+verification of the users for us. We can also add other accounts with
+token registration if we want to add external users.
+
+To add someone with token registration, you can do it from the [admin panel](https://admin.nantral-platform.fr/registration-tokens?revoked=false).
+Click add, let the first field empty, add a limit of 1 use (one token per user recommended)
+and add a expiration date (recommended). Then you can give the token to the user and they
+can use it to register on the server.
 
 ### Federation
 
@@ -88,8 +85,9 @@ Centrale Nantes communicate with each other.
 
 ### Media Storage
 
-In order to save storage costs, we use an S3 bucket to store all the media.
-All the files are uploaded there so that we save space on the VPS.
+In order to save storage costs and improve performances,
+we use an S3 bucket to store all the media. All the files
+are uploaded there so that we save space on the VPS.
 
 ### Element
 
