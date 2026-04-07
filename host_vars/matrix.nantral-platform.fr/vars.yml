@@ -149,6 +149,11 @@ traefik_environment_variables: |
 ## Rooms
 matrix_synapse_auto_join_rooms:
   - "#home:nantral-platform.fr"
+  - "#index:nantral-platform.fr"
+  - "#annonces-BDX:nantral-platform.fr"
+  - "#annonces-clubs:nantral-platform.fr"
+  - "#objets-perdus:nantral-platform.fr"
+  - "#administratif:nantral-platform.fr"
 matrix_synapse_auto_join_mxid_localpart: "admin"
 matrix_synapse_auto_accept_invites_enabled: true
 matrix_synapse_auto_accept_invites_only_for_direct_messages: true
