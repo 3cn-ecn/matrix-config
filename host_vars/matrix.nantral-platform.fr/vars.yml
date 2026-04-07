@@ -196,10 +196,15 @@ matrix_authentication_service_config_email_password: !vault |
 
 ## Storage
 matrix_media_repo_enabled: true
+matrix_media_repo_datastore_file_id: "ce1ec8fa-4c85-500a-95a9-af8041329e23"
+matrix_media_repo_datastore_s3_id: "b6d656f5-0fd7-56ae-ad97-a186a3d51536"
 matrix_media_repo_admins: ["@admin:nantral-platform.fr"]
-matrix_media_repo_datastore_file_for_kinds: []
+matrix_media_repo_datastore_file_for_kinds: ["thumbnails", "archives"]
+matrix_media_repo_rate_limit_enabled: false
+matrix_media_repo_log_level: trace
 matrix_media_repo_datastore_s3_for_kinds:
   ["thumbnails", "remote_media", "local_media", "archives"]
+matrix_media_repo_archiving_self_service: true
 matrix_media_repo_datastore_s3_opts_temp_path: "/tmp"
 matrix_media_repo_datastore_s3_opts_endpoint: "s3.sbg.io.cloud.ovh.net"
 matrix_media_repo_datastore_s3_opts_access_key_id: !vault |
@@ -223,19 +228,7 @@ matrix_media_repo_datastore_s3_opts_bucket_name: "nantral-platform-matrix"
 matrix_media_repo_datastore_s3_opts_region: "sbg"
 matrix_media_repo_datastore_s3_opts_storage_class: "STANDARD"
 #matrix_media_repo_datastore_s3_opts_public_base_url: "https://nantral-platform-matrix.s3.sbg.io.cloud.ovh.net/"
-matrix_media_repo_quotas_users_additional:
-  - glob: "@*:*" # Affect all users. Use asterisks (*) to match any character.
-    # The maximum number of TOTAL bytes a user can upload. Defaults to zero (no limit).
-    maxBytes: 536870912 # 512MiB
-    # The same as maxPending above - the number of uploads the user can have waiting to
-    # complete before starting another one. Defaults to maxPending above. Set to 0 to
-    # disable.
-    maxPending: 5
-    # The maximum number of uploaded files a user can have. Defaults to zero (no limit).
-    # If both maxBytes and maxFiles are in use then the first condition a user triggers
-    # will prevent upload. Note that a user can still have uploads contributing to maxPending,
-    # but will not be able to complete them if they are at maxFiles.
-    maxFiles: 0
+matrix_media_repo_quotas_enabled: true
 matrix_media_repo_thumbnails_expire_after_days: 15
 # The number of requests per second before an IP will be rate limited. Must be a whole number.
 matrix_media_repo_rate_limit_requests_per_second: 10
