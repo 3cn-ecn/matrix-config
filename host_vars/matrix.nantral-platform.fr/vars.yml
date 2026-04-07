@@ -157,6 +157,7 @@ matrix_synapse_auto_join_rooms:
 matrix_synapse_auto_join_mxid_localpart: "admin"
 matrix_synapse_auto_accept_invites_enabled: true
 matrix_synapse_auto_accept_invites_only_for_direct_messages: true
+# TODO: see if we want to keep this off
 matrix_synapse_auto_accept_invites_only_from_local_users: false
 
 ## Emails
@@ -238,8 +239,8 @@ matrix_media_repo_rate_limit_burst: 30
 ## Templates TODO: Create and store the templates
 
 ## Admin
-matrix_synapse_admin_enabled: true
-matrix_synapse_admin_path_prefix: /admin
+matrix_ketesa_enabled: true
+matrix_ketesa_path_prefix: /admin
 
 ## Others
 matrix_url_preview_accept_language: ["fr-FR", "fr", "en-US", "en"]
