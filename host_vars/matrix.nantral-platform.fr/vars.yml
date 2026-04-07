@@ -116,7 +116,7 @@ matrix_synapse_allow_public_rooms_over_federation: false
 ## SSL
 traefik_config_certificatesResolvers_acme_dnsChallenge_enabled: true
 traefik_config_certificatesResolvers_acme_dnsChallenge_provider: "ovh"
-traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck: 60
+traefik_config_certificatesResolvers_acme_dnsChallenge_propagation_delayBeforeChecks: 60
 ovh_application_key: !vault |
   $ANSIBLE_VAULT;1.1;AES256
   65393466333433386137613730373931346162376531363361653035613038316263646638323236
