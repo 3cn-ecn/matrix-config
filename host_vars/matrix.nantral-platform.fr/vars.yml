@@ -246,7 +246,7 @@ matrix_element_admin_hostname: "admin.{{ matrix_domain }}"
 
 ## Others
 matrix_url_preview_accept_language: ["fr-FR", "fr", "en-US", "en"]
-matrix_synapse_configuration_extension_yaml:
+matrix_synapse_configuration_extension_yaml: |
   server_notices:
     system_mxid_localpart: _server
     system_mxid_display_name: "Annonces Serveur"
@@ -259,12 +259,12 @@ matrix_synapse_configuration_extension_yaml:
 ## Privacy
 matrix_synapse_presence_enabled: true
 matrix_synapse_allow_public_rooms_without_auth: false
-matrix_synapse_require_auth_for_profile_requests: true # Useless if federation enabled
-matrix_synapse_limit_profile_requests_to_users_who_share_rooms: false # Does not work with federation
+matrix_synapse_require_auth_for_profile_requests: true  # Useless if federation enabled
+matrix_synapse_limit_profile_requests_to_users_who_share_rooms: false  # Does not work with federation
 matrix_synapse_include_profile_data_on_invite: true
 # User search behaviour
-matrix_synapse_user_directory_search_all_users: false
-matrix_synapse_user_directory_prefer_local_users: false
+matrix_synapse_user_directory_search_all_users: true
+matrix_synapse_user_directory_prefer_local_users: true
 
 ## Element
 matrix_client_element_enabled: true
@@ -294,9 +294,9 @@ matrix_client_element_features_custom:
 prometheus_enabled: true
 prometheus_node_exporter_enabled: true
 prometheus_postgres_exporter_enabled: true
+prometheus_nginxlog_exporter_enabled: true
 matrix_synapse_metrics_enabled: true
-matrix_synapse_usage_exporter_enabled: false
-#matrix_synapse_usage_exporter_container_image_self_build_repo: "https://github.com/famedly/synapse-usage-exporter.git"
+matrix_synapse_usage_exporter_enabled: true
 matrix_media_repo_metrics_enabled: true
 grafana_enabled: true
 grafana_default_admin_user: "admin"
