@@ -56,43 +56,57 @@ matrix_synapse_retention_enabled: false
 #matrix_synapse_media_retention_local_media_lifetime: "1m"
 #matrix_synapse_media_retention_remote_media_lifetime: "1m"
 
-## Auth
-matrix_synapse_enable_registration: false
-matrix_synapse_password_config_localdb_enabled: false
-# REST password provider
-matrix_synapse_ext_password_provider_rest_auth_enabled: true
-matrix_synapse_ext_password_provider_rest_auth_download_url: "https://raw.githubusercontent.com/3cn-ecn/matrix-config/refs/heads/main/modules/rest_auth_provider.py"
-matrix_synapse_ext_password_provider_rest_auth_endpoint: "https://nantral-platform.fr"
-matrix_synapse_ext_password_provider_rest_auth_registration_enforce_lowercase: true
-matrix_synapse_ext_password_provider_rest_auth_registration_profile_name_autofill: true
-matrix_synapse_ext_password_provider_rest_auth_login_profile_name_autofill: false
-# OIDConnect
-matrix_synapse_oidc_enabled: true
-matrix_synapse_oidc_providers:
-  - idp_id: nantralPlatform
-    idp_name: "Nantral Platform"
-    idp_icon: "mxc://nantral-platform.fr/9e9b4e70b9f3c22d6c57c5c433664d19533412b81969390612142620672"
-    issuer: "https://nantral-platform.fr/openid/"
+## Auth (MAS)
+matrix_authentication_service_enabled: true
+matrix_authentication_service_config_secrets_encryption: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  30336632626338326161386432663530353464373533343063396430393036636662353962623834
+  6237636137663030313966353062393139373563393736350a303438373261633732633361353162
+  65333831623539373364626333323062643537313431343533326461663262353161373537643866
+  3130333634363963610a613631353430646434623238366663646439386461306565656434303933
+  31633462393735353838663233303439376236663164346562616433623638353831333432623337
+  32376562303138366636633537303438643564386261386237666166363134376262653564396631
+  33653738336661653666623032323834633933333061636632353135663361623136303336323739
+  65346430393537333232
+# OIDC
+matrix_authentication_service_config_upstream_oauth2_providers:
+  - id: 01KB51XH8YR0DN5C0NT22AGBYJ
+    synapse_idp_id: oidc-nantralPlatform
+    issuer: "https://nantral-platform.fr/openid"
+    human_name: Nantral Platform
+    #brand_name: TODO: add a custom brand to the templates
     client_id: "754497"
     client_secret: !vault |
       $ANSIBLE_VAULT;1.1;AES256
-      33306435653333393533306531633233663662333466373032663464396330376132353833636230
-      6631656266396334626132366661623233666632663530330a643234353236636263326161363538
-      34396662623634363537626531306435366165343763386439326633316262323034346431663936
-      3933323730653662350a306137613965353361363664363537343761386639653065636432376532
-      38666630653035353836313431313264666430353138303266643466323339636134656233376631
-      64613563383438333731393835636231666139333232633737633763323063643163393832376361
-      666531306138396662636564643366373538
-    scopes: ["openid", "mas", "email"]
-    enable_registration: true
-    user_mapping_provider:
-      config:
-        localpart_template: "{% raw %}{{ user.preferred_username }}{% endraw %}"
-        confirm_localpart: false
-        display_name_template: "{% raw %}{{ user.name }}{% endraw %}"
-        email_template: "{% raw %}{{ user.email }}{% endraw %}"
-    allow_existing_users: true # To add oidc to existing accounts instead of creating new ones
-    backchannel_logout_enabled: true
+      37396163343164613366623132353338356362656439383130313434363132313737356163646466
+      3564643866616133333836623535626163346336313561330a343231336364353630663361633763
+      37303436616334613264386235323736376432353565353465393464613630623132633531323065
+      6161653162383664640a626331313338336165616536336532356239663039653432363239323361
+      63633561633133306465333235663935616630666536373739356166616463626339313239363138
+      34366362396161663865323165656631636335386631633237373836313637353162366238393664
+      663337616266383038656665326136393430
+    scope: "openid mas email"
+    token_endpoint_auth_method: client_secret_basic
+    on_backchannel_logout: do_nothing
+    claims_imports:
+      localpart:
+        action: require
+        on_conflict: add
+        template: "{% raw %}{{ user.preferred_username }}{% endraw %}"
+      displayname:
+        action: suggest
+        template: "{% raw %}{{ user.name }}{% endraw %}"
+      email:
+        action: suggest
+        template: "{% raw %}{{ user.email }}{% endraw %}"
+        set_email_verification: import
+matrix_authentication_service_config_account_password_registration_enabled: false
+matrix_authentication_service_config_account_password_recovery_enabled: true
+matrix_authentication_service_config_account_account_deactivation_allowed: false
+matrix_authentication_service_config_account_login_with_email_allowed: true
+matrix_authentication_service_config_account_registration_token_required: true
+matrix_authentication_service_config_passwords_enabled: true
+matrix_authentication_service_admin_api_enabled: true
 
 ## Federation -- disabled for privacy
 matrix_synapse_federation_enabled: false
@@ -153,10 +167,27 @@ matrix_synapse_email_smtp_pass: !vault |
   37393261653834626263373364633234356136373831646638313534303461393531356339623639
   3361363434323735390a373136356638383062316232386363303466376432333464613030326461
   64663165343436663763663866663931353631343862386164303962643132643432
-matrix_synapse_email_smtp_require_transport_security: false
-matrix_synapse_email_notif_from: "Matrix <matrix@nantral-platform.fr>"
+matrix_synapse_email_smtp_require_transport_security: true
+matrix_synapse_email_notif_from: "Matrix <no-reply@nantral-platform.fr>"
 matrix_synapse_email_app_name: Matrix
 matrix_synapse_email_invite_client_location: "https://element.nantral-platform.fr"
+# Emails from Matrix authentication service
+matrix_authentication_service_config_email_from: '"{{ matrix_authentication_service_config_email_from_name }}" <{{ matrix_authentication_service_config_email_from_address }}>'
+matrix_authentication_service_config_email_from_name: 'Matrix Authentication Service'
+matrix_authentication_service_config_email_from_address: "no-reply@nantral-platform.fr"
+matrix_authentication_service_config_email_reply_to_address: "contact@nantral-platform.fr"
+matrix_authentication_service_config_email_transport: smtp
+matrix_authentication_service_config_email_mode: tls
+matrix_authentication_service_config_email_hostname: "mail.nantral-platform.fr"
+matrix_authentication_service_config_email_port: 465
+matrix_authentication_service_config_email_username: "admin@nantral-platform.fr"
+matrix_authentication_service_config_email_password: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  39383536356637393566333936633466633463353635646165383639383662366639306565626132
+  6635313136353133646261666330313630313634633834340a316262396331393164663739643034
+  37393261653834626263373364633234356136373831646638313534303461393531356339623639
+  3361363434323735390a373136356638383062316232386363303466376432333464613030326461
+  64663165343436663763663866663931353631343862386164303962643132643432
 
 ## Storage
 matrix_media_repo_enabled: true
