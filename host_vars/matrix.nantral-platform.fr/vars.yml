@@ -278,7 +278,6 @@ matrix_client_element_room_directory_servers: ["nantral-platform.fr"]
 matrix_client_element_branding_welcome_background_url: "https://nantral-platform.fr/static/img/central_background.jpg"
 matrix_client_element_configuration_extension_json: |
   {
-    "mobile_guide_app_variant": "element-classic",
     "UIFeature": {
       "urlPreviews": true,
       "registration": false,
