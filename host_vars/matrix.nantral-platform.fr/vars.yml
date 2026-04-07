@@ -334,3 +334,6 @@ grafana_environment_variables_additional_variables: |
   # use the invalid role "Deny" to prevent login for users not in any of the allowed groups
   GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH=contains(groups[*], 'Grafana Admins') && 'Admin' || contains(groups[*], 'Grafana Editors') && 'Editor' || contains(groups[*], 'Grafana Viewers') && 'Viewer' || 'Deny'
   GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_STRICT=true
+
+## Calls
+matrix_rtc_enabled: true
