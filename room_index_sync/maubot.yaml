@@ -1,0 +1,10 @@
+maubot: 0.1.0
+id: fr.nantral-platform.maubot.room-index-sync
+version: 1.0.3
+license: MIT
+modules:
+  - room_index_sync
+main_class: RoomIndexSyncPlugin
+name: Room Index Sync
+description: Synchronizes room public directory with a custom space.
+author: Jean-Benoît Grimaldi
