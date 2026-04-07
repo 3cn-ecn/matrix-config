@@ -337,3 +337,15 @@ grafana_environment_variables_additional_variables: |
 
 ## Calls
 matrix_rtc_enabled: true
+
+## Support
+# Enable generation of `/.well-known/matrix/support`.
+matrix_static_files_file_matrix_support_enabled: true
+matrix_static_files_file_matrix_support_property_m_contacts:
+  - matrix_id: "@admin:{{ matrix_domain }}"
+    email_address: contact@nantral-platform.fr
+    role: m.role.admin
+  - matrix_id: "@bde:{{ matrix_domain }}"
+    email_address: bdecentralenantes@gmail.com
+    role: m.role.security
+matrix_static_files_file_matrix_support_property_m_support_page: "https://nantral-platform.fr/feedback"
