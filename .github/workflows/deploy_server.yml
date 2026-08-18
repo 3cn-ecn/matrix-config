@@ -1,13 +1,6 @@
 name: Deploy Matrix
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - host_vars/**
-      - modules/**
-      - hosts
   workflow_dispatch:
 
 jobs:
