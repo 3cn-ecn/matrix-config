@@ -2,7 +2,7 @@
 # This variable acknowledges that you've reviewed breaking changes up to this version.
 # The playbook will fail if this is outdated, guiding you through what changed.
 # See the changelog: https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/CHANGELOG.md
-matrix_playbook_migration_validated_version: "v2026.04.03.0"
+matrix_playbook_migration_validated_version: "v2026.05.18.0" # Last updated: 2026.08.18
 
 matrix_domain: nantral-platform.fr
 
@@ -88,6 +88,7 @@ matrix_authentication_service_config_upstream_oauth2_providers:
     scope: "openid mas email"
     token_endpoint_auth_method: client_secret_basic
     on_backchannel_logout: do_nothing
+    registration_token_required: false
     claims_imports:
       localpart:
         action: require
@@ -105,7 +106,7 @@ matrix_authentication_service_config_account_password_recovery_enabled: true
 matrix_authentication_service_config_account_account_deactivation_allowed: false
 matrix_authentication_service_config_account_login_with_email_allowed: true
 matrix_authentication_service_config_account_registration_token_required: true
-matrix_authentication_service_config_passwords_enabled: true
+matrix_authentication_service_config_passwords_enabled: false
 matrix_authentication_service_admin_api_enabled: true
 
 ## Federation -- disabled for privacy
@@ -162,6 +163,19 @@ matrix_synapse_auto_accept_invites_only_from_local_users: false
 
 ## Emails
 exim_relay_enabled: false
+#exim_relay_sender_address: "matrix@nantral-platform.fr"
+#exim_relay_relay_use: true
+#exim_relay_relay_host_name: "mail.nantral-platform.fr"
+#exim_relay_relay_host_port: 465
+#exim_relay_relay_auth: true
+#exim_relay_relay_auth_username: "admin@nantral-platform.fr"
+#exim_relay_relay_auth_password: !vault |
+#  $ANSIBLE_VAULT;1.1;AES256
+#  39383536356637393566333936633466633463353635646165383639383662366639306565626132
+#  6635313136353133646261666330313630313634633834340a316262396331393164663739643034
+#  37393261653834626263373364633234356136373831646638313534303461393531356339623639
+#  3361363434323735390a373136356638383062316232386363303466376432333464613030326461
+#  64663165343436663763663866663931353631343862386164303962643132643432
 matrix_synapse_email_enabled: true
 matrix_synapse_email_smtp_host: "mail.nantral-platform.fr"
 matrix_synapse_email_smtp_port: 465
@@ -292,7 +306,6 @@ matrix_client_element_default_country_code: "FR"
 matrix_client_element_themes_enabled: true
 matrix_client_element_brand: "Element - Nantral Platform"
 matrix_client_element_welcome_logo: "https://nantral-platform.fr/static/img/logo/scalable/logo.svg"
-matrix_client_element_welcome_logo_link: "https://nantral-platform.fr"
 matrix_client_element_permalink_prefix: "https://element.nantral-platform.fr"
 matrix_client_element_room_directory_servers: ["nantral-platform.fr"]
 matrix_client_element_branding_welcome_background_url: "https://nantral-platform.fr/static/img/central_background.jpg"
@@ -374,94 +387,94 @@ matrix_static_files_file_matrix_support_property_m_support_page: "https://nantra
 matrix_bridges_encryption_enabled: true
 matrix_appservice_double_puppet_enabled: true
 # WhatsApp
-matrix_mautrix_whatsapp_enabled: true
-matrix_mautrix_whatsapp_appservice_bot_username: "bridge.whatsapp"
-matrix_mautrix_whatsapp_bridge_username_prefix: "bridge.whatsapp."
-matrix_mautrix_whatsapp_configuration_extension_yaml: |
+matrix_bridge_mautrix_whatsapp_enabled: false
+matrix_bridge_mautrix_whatsapp_appservice_bot_username: "bridge.whatsapp"
+matrix_bridge_mautrix_whatsapp_bridge_username_prefix: "bridge.whatsapp."
+matrix_bridge_mautrix_whatsapp_configuration_extension_yaml: |
   appservice:
-    username_template: "{{ matrix_mautrix_whatsapp_bridge_username_prefix + '{{.}}' }}"
-matrix_mautrix_whatsapp_registration_yaml: |
+    username_template: "{{ matrix_bridge_mautrix_whatsapp_bridge_username_prefix + '{{.}}' }}"
+matrix_bridge_mautrix_whatsapp_registration_yaml: |
   id: whatsapp
-  url: {{ matrix_mautrix_whatsapp_appservice_address }}
-  as_token: "{{ matrix_mautrix_whatsapp_appservice_token }}"
-  hs_token: "{{ matrix_mautrix_whatsapp_homeserver_token }}"
+  url: {{ matrix_bridge_mautrix_whatsapp_appservice_address }}
+  as_token: "{{ matrix_bridge_mautrix_whatsapp_appservice_token }}"
+  hs_token: "{{ matrix_bridge_mautrix_whatsapp_homeserver_token }}"
   # See https://github.com/mautrix/signal/issues/43
-  sender_localpart: _bot_{{ matrix_mautrix_whatsapp_appservice_bot_username }}
+  sender_localpart: _bot_{{ matrix_bridge_mautrix_whatsapp_appservice_bot_username }}
   rate_limited: false
   namespaces:
       users:
-      - regex: '^@{{ matrix_mautrix_whatsapp_bridge_username_prefix | regex_escape }}.*:{{ matrix_mautrix_whatsapp_homeserver_domain | regex_escape }}$'
+      - regex: '^@{{ matrix_bridge_mautrix_whatsapp_bridge_username_prefix | regex_escape }}.*:{{ matrix_bridge_mautrix_whatsapp_homeserver_domain | regex_escape }}$'
         exclusive: true
       - exclusive: true
-        regex: '^@{{ matrix_mautrix_whatsapp_appservice_bot_username | regex_escape }}:{{ matrix_mautrix_whatsapp_homeserver_domain | regex_escape }}$'
+        regex: '^@{{ matrix_bridge_mautrix_whatsapp_appservice_bot_username | regex_escape }}:{{ matrix_bridge_mautrix_whatsapp_homeserver_domain | regex_escape }}$'
   de.sorunome.msc2409.push_ephemeral: true
   receive_ephemeral: true
-  io.element.msc4190: {{ matrix_mautrix_whatsapp_msc4190_enabled | to_json }}
+  io.element.msc4190: {{ matrix_bridge_mautrix_whatsapp_msc4190_enabled | to_json }}
 # Messenger
-matrix_mautrix_meta_messenger_enabled: true
-matrix_mautrix_meta_messenger_appservice_username: "bridge.messenger"
-matrix_mautrix_meta_messenger_bridge_username_prefix: "bridge.messenger."
-matrix_mautrix_meta_messenger_backfill_max_initial_messages: 500
-matrix_mautrix_meta_messenger_registration_yaml: |
-  id: {{ matrix_mautrix_meta_messenger_appservice_id | to_json }}
-  as_token: {{ matrix_mautrix_meta_messenger_appservice_token | to_json }}
-  hs_token: {{ matrix_mautrix_meta_messenger_homeserver_token | to_json }}
+matrix_bridge_mautrix_meta_messenger_enabled: false
+matrix_bridge_mautrix_meta_messenger_appservice_username: "bridge.messenger"
+matrix_bridge_mautrix_meta_messenger_bridge_username_prefix: "bridge.messenger."
+matrix_bridge_mautrix_meta_messenger_backfill_max_initial_messages: 500
+matrix_bridge_mautrix_meta_messenger_registration_yaml: |
+  id: {{ matrix_bridge_mautrix_meta_messenger_appservice_id | to_json }}
+  as_token: {{ matrix_bridge_mautrix_meta_messenger_appservice_token | to_json }}
+  hs_token: {{ matrix_bridge_mautrix_meta_messenger_homeserver_token | to_json }}
   namespaces:
     users:
     - exclusive: true
-      regex: '^@{{ matrix_mautrix_meta_messenger_bridge_username_prefix | regex_escape }}.+:{{ matrix_mautrix_meta_messenger_homeserver_domain | regex_escape }}$'
+      regex: '^@{{ matrix_bridge_mautrix_meta_messenger_bridge_username_prefix | regex_escape }}.+:{{ matrix_bridge_mautrix_meta_messenger_homeserver_domain | regex_escape }}$'
     - exclusive: true
-      regex: '^@{{ matrix_mautrix_meta_messenger_appservice_username | regex_escape }}:{{ matrix_mautrix_meta_messenger_homeserver_domain | regex_escape }}$'
-  url: {{ matrix_mautrix_meta_messenger_appservice_address }}
-  sender_localpart: _bot_{{ matrix_mautrix_meta_messenger_appservice_username }}
+      regex: '^@{{ matrix_bridge_mautrix_meta_messenger_appservice_username | regex_escape }}:{{ matrix_bridge_mautrix_meta_messenger_homeserver_domain | regex_escape }}$'
+  url: {{ matrix_bridge_mautrix_meta_messenger_appservice_address }}
+  sender_localpart: _bot_{{ matrix_bridge_mautrix_meta_messenger_appservice_username }}
   rate_limited: false
   de.sorunome.msc2409.push_ephemeral: true
   receive_ephemeral: true
-  io.element.msc4190: {{ matrix_mautrix_meta_messenger_msc4190_enabled | to_json }}
+  io.element.msc4190: {{ matrix_bridge_mautrix_meta_messenger_msc4190_enabled | to_json }}
 # Instagram
-matrix_mautrix_meta_instagram_enabled: true
-matrix_mautrix_meta_instagram_appservice_username: "bridge.instagram"
-matrix_mautrix_meta_instagram_bridge_username_prefix: "bridge.instagram."
-matrix_mautrix_meta_instagram_backfill_max_initial_messages: 500
-matrix_mautrix_meta_instagram_registration_yaml: |
-  id: {{ matrix_mautrix_meta_instagram_appservice_id | to_json }}
-  as_token: {{ matrix_mautrix_meta_instagram_appservice_token | to_json }}
-  hs_token: {{ matrix_mautrix_meta_instagram_homeserver_token | to_json }}
+matrix_bridge_mautrix_meta_instagram_enabled: false
+matrix_bridge_mautrix_meta_instagram_appservice_username: "bridge.instagram"
+matrix_bridge_mautrix_meta_instagram_bridge_username_prefix: "bridge.instagram."
+matrix_bridge_mautrix_meta_instagram_backfill_max_initial_messages: 500
+matrix_bridge_mautrix_meta_instagram_registration_yaml: |
+  id: {{ matrix_bridge_mautrix_meta_instagram_appservice_id | to_json }}
+  as_token: {{ matrix_bridge_mautrix_meta_instagram_appservice_token | to_json }}
+  hs_token: {{ matrix_bridge_mautrix_meta_instagram_homeserver_token | to_json }}
   namespaces:
     users:
     - exclusive: true
-      regex: '^@{{ matrix_mautrix_meta_instagram_bridge_username_prefix | regex_escape }}.+:{{ matrix_mautrix_meta_instagram_homeserver_domain | regex_escape }}$'
+      regex: '^@{{ matrix_bridge_mautrix_meta_instagram_bridge_username_prefix | regex_escape }}.+:{{ matrix_bridge_mautrix_meta_instagram_homeserver_domain | regex_escape }}$'
     - exclusive: true
-      regex: '^@{{ matrix_mautrix_meta_instagram_appservice_username | regex_escape }}:{{ matrix_mautrix_meta_instagram_homeserver_domain | regex_escape }}$'
-  url: {{ matrix_mautrix_meta_instagram_appservice_address }}
-  sender_localpart: _bot_{{ matrix_mautrix_meta_instagram_appservice_username }}
+      regex: '^@{{ matrix_bridge_mautrix_meta_instagram_appservice_username | regex_escape }}:{{ matrix_bridge_mautrix_meta_instagram_homeserver_domain | regex_escape }}$'
+  url: {{ matrix_bridge_mautrix_meta_instagram_appservice_address }}
+  sender_localpart: _bot_{{ matrix_bridge_mautrix_meta_instagram_appservice_username }}
   rate_limited: false
   de.sorunome.msc2409.push_ephemeral: true
   receive_ephemeral: true
-  io.element.msc4190: {{ matrix_mautrix_meta_instagram_msc4190_enabled | to_json }}
+  io.element.msc4190: {{ matrix_bridge_mautrix_meta_instagram_msc4190_enabled | to_json }}
 # Discord
-matrix_mautrix_discord_enabled: true
-matrix_mautrix_discord_appservice_bot_username: "bridge.discord"
-matrix_mautrix_discord_bridge_username_prefix: "bridge.discord."
-matrix_mautrix_discord_bridge_username_template: "{{ matrix_mautrix_discord_bridge_username_prefix + '{{.}}' }}"
-matrix_mautrix_discord_registration_yaml: |
+matrix_bridge_mautrix_discord_enabled: false
+matrix_bridge_mautrix_discord_appservice_bot_username: "bridge.discord"
+matrix_bridge_mautrix_discord_bridge_username_prefix: "bridge.discord."
+matrix_bridge_mautrix_discord_bridge_username_template: "{{ matrix_bridge_mautrix_discord_bridge_username_prefix + '{{.}}' }}"
+matrix_bridge_mautrix_discord_registration_yaml: |
   id: discord
-  url: {{ matrix_mautrix_discord_appservice_address }}
-  as_token: "{{ matrix_mautrix_discord_appservice_token }}"
-  hs_token: "{{ matrix_mautrix_discord_homeserver_token }}"
+  url: {{ matrix_bridge_mautrix_discord_appservice_address }}
+  as_token: "{{ matrix_bridge_mautrix_discord_appservice_token }}"
+  hs_token: "{{ matrix_bridge_mautrix_discord_homeserver_token }}"
   # See https://github.com/mautrix/signal/issues/43
-  sender_localpart: _bot_{{ matrix_mautrix_discord_appservice_bot_username }}
+  sender_localpart: _bot_{{ matrix_bridge_mautrix_discord_appservice_bot_username }}
   rate_limited: false
   namespaces:
       users:
-      - regex: '^@{{ matrix_mautrix_discord_bridge_username_prefix | regex_escape }}[0-9]+:{{ matrix_mautrix_discord_homeserver_domain | regex_escape }}$'
+      - regex: '^@{{ matrix_bridge_mautrix_discord_bridge_username_prefix | regex_escape }}[0-9]+:{{ matrix_bridge_mautrix_discord_homeserver_domain | regex_escape }}$'
         exclusive: true
       - exclusive: true
-        regex: '^@{{ matrix_mautrix_discord_appservice_bot_username | regex_escape }}:{{ matrix_mautrix_discord_homeserver_domain | regex_escape }}$'
+        regex: '^@{{ matrix_bridge_mautrix_discord_appservice_bot_username | regex_escape }}:{{ matrix_bridge_mautrix_discord_homeserver_domain | regex_escape }}$'
   de.sorunome.msc2409.push_ephemeral: true
   receive_ephemeral: true
-  io.element.msc4190: {{ matrix_mautrix_discord_msc4190_enabled | to_json }}
-matrix_mautrix_discord_configuration_extension_yaml: |
+  io.element.msc4190: {{ matrix_bridge_mautrix_discord_msc4190_enabled | to_json }}
+matrix_bridge_mautrix_discord_configuration_extension_yaml: |
   bridge:
     startup_private_channel_create_limit: 20
     backfill:
@@ -477,7 +490,7 @@ matrix_mautrix_discord_configuration_extension_yaml: |
       max_guild_members: -1
 
 ## Bots
-matrix_bot_maubot_enabled: true
+matrix_bot_maubot_enabled: false
 # For the bot itself (does not actually work, we registered it manually after installation)
 matrix_bot_maubot_login: bot.maubot
 matrix_bot_maubot_initial_password: !vault |

@@ -22,9 +22,6 @@ git clone https://github.com/spantaleev/matrix-docker-ansible-deploy.git
 cd matrix-docker-ansible-deploy
 ```
 
-Then run `just update` in order to download the dependencies
-(and also update the playbook to the latest version).
-
 Now you will need to get the configuration from this repository:
 
 ```bash
@@ -32,6 +29,21 @@ git clone git@github.com:3cn-ecn/matrix-config.git inventory
 ```
 
 *We use ssh but you can also use https*
+
+*Note: for the next steps, please don't `cd` into this repo.*
+
+It is then necessary to run
+
+```bash
+git apply inventory/grafana_logs.patch
+```
+
+in order to add the logs to Grafana (not included in the playbook).
+
+Then, run `just update` in order to download the dependencies
+(and also update the playbook to the latest version). If you encounter
+errors linked with the patch, please update the patch to work with
+the latest version of the playbook.
 
 If you want to deploy to another server, move the `vars.yml` file to the
 appropriate directory, change the server name in it and update the
