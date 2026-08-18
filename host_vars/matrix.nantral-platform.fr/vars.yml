@@ -367,6 +367,55 @@ grafana_environment_variables_additional_variables: |
   # use the invalid role "Deny" to prevent login for users not in any of the allowed groups
   GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH=contains(groups[*], 'Grafana Admins') && 'Admin' || contains(groups[*], 'Grafana Editors') && 'Editor' || contains(groups[*], 'Grafana Viewers') && 'Viewer' || 'Deny'
   GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_STRICT=true
+grafana_container_additional_networks_auto: |
+  {{
+    (
+      ['loki']
+      +
+      ([matrix_playbook_reverse_proxyable_services_additional_network] if matrix_playbook_reverse_proxyable_services_additional_network and grafana_container_labels_traefik_enabled else [])
+      +
+      ([prometheus_container_network] if prometheus_enabled and prometheus_container_network != grafana_container_network else [])
+    ) | unique
+  }}
+grafana_provisioning_datasources_datasources: |
+  {{
+    ([{
+      'name': (matrix_server_fqn_matrix + ' - Prometheus'),
+      'type': 'prometheus',
+      'access': 'proxy',
+      'url': ('http://' + prometheus_identifier + ':9090'),
+      'jsonData': {
+        'timeInterval': prometheus_config_global_scrape_interval,
+      }
+    }, {
+      'name': 'Loki',
+      'type': 'loki',
+      'access': 'proxy',
+      'url': (loki_scheme + '://' + loki_identifier + ':' + loki_server_http_listen_port),
+      'jsonData': {
+        'httpHeaderName1': 'X-Scope-OrgID',
+      }
+      'secureJsonData': {
+        'httpHeaderValue1': "your-tenant-id",
+      }
+    }] if prometheus_enabled else [])
+  }}
+grafana_dashboard_download_urls_auto: |
+  {{
+    ["https://grafana.com/api/dashboards/13407/revisions/1/download"]
+    +
+    (matrix_synapse_grafana_dashboard_urls if matrix_homeserver_implementation == 'synapse' and matrix_synapse_metrics_enabled else [])
+    +
+    (prometheus_node_exporter_dashboard_urls if prometheus_node_exporter_enabled else [])
+    +
+    (prometheus_postgres_exporter_dashboard_urls if prometheus_postgres_exporter_enabled else [])
+    +
+    (prometheus_nginxlog_exporter_dashboard_urls if prometheus_nginxlog_exporter_enabled else [])
+    +
+    (matrix_media_repo_dashboard_urls if matrix_media_repo_metrics_enabled else [])
+    +
+    (matrix_synapse_usage_exporter_dashboard_urls if matrix_synapse_usage_exporter_enabled else [])
+  }}
 
 ## Calls
 matrix_rtc_enabled: true
