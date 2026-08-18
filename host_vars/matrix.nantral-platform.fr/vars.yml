@@ -391,12 +391,12 @@ grafana_provisioning_datasources_datasources: |
       'name': 'Loki',
       'type': 'loki',
       'access': 'proxy',
-      'url': (loki_scheme + '://' + loki_identifier + ':' + loki_server_http_listen_port)
+      'url': 'http://loki:3100'
     }] if prometheus_enabled else [])
   }}
 grafana_dashboard_download_urls_auto: |
   {{
-    ["https://grafana.com/api/dashboards/13407/revisions/1/download"]
+    ['https://grafana.com/api/dashboards/13407/revisions/1/download']
     +
     (matrix_synapse_grafana_dashboard_urls if matrix_homeserver_implementation == 'synapse' and matrix_synapse_metrics_enabled else [])
     +
