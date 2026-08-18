@@ -391,13 +391,7 @@ grafana_provisioning_datasources_datasources: |
       'name': 'Loki',
       'type': 'loki',
       'access': 'proxy',
-      'url': (loki_scheme + '://' + loki_identifier + ':' + loki_server_http_listen_port),
-      'jsonData': {
-        'httpHeaderName1': 'X-Scope-OrgID',
-      }
-      'secureJsonData': {
-        'httpHeaderValue1': "your-tenant-id",
-      }
+      'url': (loki_scheme + '://' + loki_identifier + ':' + loki_server_http_listen_port)
     }] if prometheus_enabled else [])
   }}
 grafana_dashboard_download_urls_auto: |
