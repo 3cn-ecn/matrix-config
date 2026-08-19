@@ -370,7 +370,7 @@ grafana_environment_variables_additional_variables: |
 grafana_container_additional_networks_auto: |
   {{
     (
-      ['loki']
+      ['mash-loki']
       +
       ([matrix_playbook_reverse_proxyable_services_additional_network] if matrix_playbook_reverse_proxyable_services_additional_network and grafana_container_labels_traefik_enabled else [])
       +
